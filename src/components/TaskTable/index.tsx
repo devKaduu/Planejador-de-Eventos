@@ -1,19 +1,14 @@
 import React, { useMemo, useState } from "react";
-import { useTaskStore } from "../store/useTaskStore.ts";
-import { Task } from "../types";
+import { useTaskStore } from "../../store/useTaskStore.ts";
 import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
-import { getMonthName } from "../utils/helpers";
-import { Button } from "./ui/Button";
-import { TaskRow } from "./TaskRow.tsx";
-import { TableHeaderItem } from "./TableHeaderItem.tsx";
+import { getMonthName } from "../../utils/helpers";
+import { Button } from "../ui/Button";
+import { TaskRow } from "../TaskRow.tsx";
+import { TableHeaderItem } from "../TableHeaderItem.tsx";
+import { TaskTableProps } from "./props.ts";
+import { mockTableHeader } from "./mock.ts";
 
-interface TaskTableProps {
-  onEditTask: (task: Task) => void;
-  onAddTask: (category?: string, parentId?: string) => void;
-  onDeleteCategory?: (id: string) => void;
-}
-
-const TaskTable: React.FC<TaskTableProps> = ({
+export const TaskTable: React.FC<TaskTableProps> = ({
   onEditTask,
   onAddTask,
   onDeleteCategory,
@@ -63,16 +58,9 @@ const TaskTable: React.FC<TaskTableProps> = ({
       <table className="min-w-full border-collapse text-sm md:text-base">
         <thead>
           <tr className="bg-[#8d1b55] text-center text-white">
-            <TableHeaderItem text="CATEGORIA" />
-            <TableHeaderItem text="O QUE" />
-            <TableHeaderItem text="QUEM" />
-            <TableHeaderItem text="DEADLINE APROVAÇÃO" />
-            <TableHeaderItem text="COMENTÁRIOS" />
-            <TableHeaderItem text="ARQUIVOS" />
-            <TableHeaderItem text="STATUS" />
-            <TableHeaderItem text="ETAPA" />
-            <TableHeaderItem text="DATA DE INÍCIO" />
-            <TableHeaderItem text="DATA PREVISTA" />
+            {mockTableHeader.map((header, index) => (
+              <TableHeaderItem key={index} text={header} />
+            ))}
             {monthHeaders.map((month) => (
               <th
                 key={`month-${month.month}`}
@@ -158,5 +146,3 @@ const TaskTable: React.FC<TaskTableProps> = ({
     </div>
   );
 };
-
-export default TaskTable;
