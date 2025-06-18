@@ -30,6 +30,9 @@ const TaskForm: React.FC<TaskFormProps> = ({
   const [responsible, setResponsible] = useState(
     initialTask?.responsible || ""
   );
+  const [deadline, setDeadLine] = useState("");
+  const [commments, setComments] = useState("");
+  const [documents, setDocuments] = useState("");
   const [status, setStatus] = useState<TaskStatus>(
     initialTask?.status || "Não Iniciado"
   );
@@ -61,12 +64,15 @@ const TaskForm: React.FC<TaskFormProps> = ({
       category,
       description,
       responsible,
+      deadline,
+      commments,
+      documents,
       status,
       stage,
       startDate,
       dueDate,
       groupId: initialTask?.groupId,
-    };
+    } as Task;
 
     onSubmit(task);
   };
@@ -162,6 +168,43 @@ const TaskForm: React.FC<TaskFormProps> = ({
               className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Dead Line
+            </label>
+            <input
+              type="text"
+              value={deadline}
+              onChange={(e) => setDeadLine(e.target.value ?? "")}
+              className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Arquivos
+            </label>
+            <input
+              type="text"
+              value={documents}
+              onChange={(e) => setDocuments(e.target.value ?? "")}
+              className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Comentários
+          </label>
+          <textarea
+            value={commments}
+            onChange={(e) => setComments(e.target.value)}
+            rows={3}
+            className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

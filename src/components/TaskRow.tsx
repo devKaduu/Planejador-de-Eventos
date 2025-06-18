@@ -66,6 +66,9 @@ export const TaskRow: React.FC<{
           </div>
         </td>
         <td className="px-6 py-3 border min-w-[150px]">{task.responsible}</td>
+        <td className="px-6 py-3 border min-w-[150px]">{task.deadline}</td>
+        <td className="px-6 py-3 border min-w-[150px]">{task.commments}</td>
+        <td className="px-6 py-3 border min-w-[150px]">{task.documents}</td>
         <td className="px-6 py-3 border text-center">
           <span
             className={`px-2 py-1 rounded text-xs ${getStatusColor(

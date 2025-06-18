@@ -3,6 +3,9 @@ export interface Task {
   category: string;
   description: string;
   responsible: string;
+  deadline: string;
+  commments: string;
+  documents: string;
   status: TaskStatus;
   stage: string;
   startDate: Date;
