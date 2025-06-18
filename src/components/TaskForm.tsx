@@ -1,10 +1,10 @@
+import { PlusCircle, X } from "lucide-react";
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Task, TaskStatus } from "../types";
 import { useTaskStore } from "../store/useTaskStore.ts";
+import { ChannelTag, Task, TaskStatus } from "../types";
 import { Button } from "./ui/Button";
-import { PlusCircle, X } from "lucide-react";
 
 interface TaskFormProps {
   initialTask?: Task;
@@ -13,12 +13,7 @@ interface TaskFormProps {
   onCancel: () => void;
 }
 
-const TaskForm: React.FC<TaskFormProps> = ({
-  initialTask,
-  parentTask,
-  onSubmit,
-  onCancel,
-}) => {
+const TaskForm: React.FC<TaskFormProps> = ({ initialTask, parentTask, onSubmit, onCancel }) => {
   const { categories } = useTaskStore();
 
   const [category, setCategory] = useState(
@@ -27,22 +22,15 @@ const TaskForm: React.FC<TaskFormProps> = ({
   const [description, setDescription] = useState(
     parentTask?.description || initialTask?.description || ""
   );
-  const [responsible, setResponsible] = useState(
-    initialTask?.responsible || ""
-  );
+  const [responsible, setResponsible] = useState(initialTask?.responsible || "");
   const [deadline, setDeadLine] = useState("");
   const [commments, setComments] = useState("");
   const [documents, setDocuments] = useState("");
-  const [status, setStatus] = useState<TaskStatus>(
-    initialTask?.status || "Não Iniciado"
-  );
+  const [channelTags, setChannelTags] = useState<ChannelTag>(initialTask?.channelTags || "Tudo");
+  const [status, setStatus] = useState<TaskStatus>(initialTask?.status || "Não Iniciado");
   const [stage, setStage] = useState(initialTask?.stage || "");
-  const [startDate, setStartDate] = useState<Date>(
-    initialTask?.startDate || new Date()
-  );
-  const [dueDate, setDueDate] = useState<Date>(
-    initialTask?.dueDate || new Date()
-  );
+  const [startDate, setStartDate] = useState<Date>(initialTask?.startDate || new Date());
+  const [dueDate, setDueDate] = useState<Date>(initialTask?.dueDate || new Date());
   const [newCategory, setNewCategory] = useState("");
   const [showNewCategory, setShowNewCategory] = useState(false);
 
@@ -67,6 +55,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
       deadline,
       commments,
       documents,
+      channelTags,
       status,
       stage,
       startDate,
@@ -81,16 +70,9 @@ const TaskForm: React.FC<TaskFormProps> = ({
     <div className="bg-white p-6 rounded-lg shadow-lg max-w-2xl w-full">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">
-          {initialTask
-            ? "Editar Tarefa"
-            : parentTask
-            ? "Nova Subtarefa"
-            : "Nova Tarefa"}
+          {initialTask ? "Editar Tarefa" : parentTask ? "Nova Subtarefa" : "Nova Tarefa"}
         </h2>
-        <button
-          onClick={onCancel}
-          className="text-gray-500 hover:text-gray-700"
-        >
+        <button onClick={onCancel} className="text-gray-500 hover:text-gray-700">
           <X size={24} />
         </button>
       </div>
@@ -98,9 +80,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Categoria
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
             {parentTask ? (
               <span className="text-xs text-gray-400">
                 Esta categoria é herdada da tarefa principal
@@ -153,9 +133,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            O que será feito
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">O que será feito</label>
           {parentTask ? (
             <span className="text-xs text-gray-400">
               Esta categoria é herdada da tarefa principal
@@ -172,9 +150,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Dead Line
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Dead Line</label>
             <input
               type="text"
               value={deadline}
@@ -183,9 +159,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Arquivos
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Arquivos</label>
             <input
               type="text"
               value={documents}
@@ -196,9 +170,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Comentários
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Comentários</label>
           <textarea
             value={commments}
             onChange={(e) => setComments(e.target.value)}
@@ -209,9 +181,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Responsável
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Responsável</label>
             <input
               type="text"
               value={responsible}
@@ -221,9 +191,23 @@ const TaskForm: React.FC<TaskFormProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Canais</label>
+            <select
+              value={channelTags}
+              onChange={(e) => setChannelTags(e.target.value as ChannelTag)}
+              className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="Tudo">Tudo</option>
+              <option value="Whatsapp">Whatsapp</option>
+              <option value="Instagram">Instagram</option>
+              <option value="Canais Ágeis">Canais Ágeis</option>
+              <option value="E-mail">E-mail</option>
+              <option value="Spotify">Spotify</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as TaskStatus)}
@@ -231,9 +215,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
             >
               <option value="Não iniciado">Não iniciado</option>
               <option value="Aguardando Informação">Em Criação</option>
-              <option value="Aguardando Informação">
-                Aguardando Informação
-              </option>
+              <option value="Aguardando Informação">Aguardando Informação</option>
               <option value="Publicada">Publicada</option>
               <option value="Refação">Refação</option>
               <option value="Aprovado">Aprovado</option>
@@ -244,9 +226,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
         <div className="grid grid-cols-1 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Etapa
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Etapa</label>
             <textarea
               value={stage}
               onChange={(e) => setStage(e.target.value)}
@@ -258,9 +238,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Data de Início
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Data de Início</label>
             <DatePicker
               selected={startDate}
               onChange={(date: Date) => setStartDate(date)}
@@ -270,9 +248,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Data Prevista
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Data Prevista</label>
             <DatePicker
               selected={dueDate}
               onChange={(date: Date) => setDueDate(date)}
@@ -287,9 +263,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancelar
           </Button>
-          <Button type="submit">
-            {initialTask ? "Atualizar" : "Adicionar"} Tarefa
-          </Button>
+          <Button type="submit">{initialTask ? "Atualizar" : "Adicionar"} Tarefa</Button>
         </div>
       </form>
     </div>

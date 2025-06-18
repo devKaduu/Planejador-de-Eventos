@@ -12,9 +12,7 @@ const Dashboard: React.FC = () => {
   const { tasks, addTask, updateTask, deleteCategory } = useTaskStore();
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
-  const [parentTaskId, setParentTaskId] = useState<string | undefined>(
-    undefined
-  );
+  const [parentTaskId, setParentTaskId] = useState<string | undefined>(undefined);
 
   const handleShowAddForm = (category?: string, parentId?: string) => {
     setEditingTask(undefined);
@@ -25,6 +23,7 @@ const Dashboard: React.FC = () => {
         category,
         description: "",
         responsible: "",
+        channelTags: "Tudo",
         status: "Não Iniciado",
         stage: "",
         startDate: new Date(),

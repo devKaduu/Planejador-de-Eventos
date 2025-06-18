@@ -1,23 +1,22 @@
+import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { useTaskStore } from "../../store/useTaskStore.ts";
-import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
 import { getMonthName } from "../../utils/helpers";
-import { Button } from "../ui/Button";
-import { TaskRow } from "../TaskRow.tsx";
 import { TableHeaderItem } from "../TableHeaderItem.tsx";
-import { TaskTableProps } from "./props.ts";
+import { TaskRow } from "../TaskRow.tsx";
+import { Button } from "../ui/Button";
 import { mockTableHeader } from "./mock.ts";
+import { TaskTableProps } from "./props.ts";
 
 export const TaskTable: React.FC<TaskTableProps> = ({
   onEditTask,
   onAddTask,
   onDeleteCategory,
 }) => {
-  const { categories, deleteTask, getTasksWithTimeline, getTasksByCategory } =
-    useTaskStore();
-  const [expandedCategories, setExpandedCategories] = useState<
-    Record<string, boolean>
-  >(() => Object.fromEntries(categories.map((cat) => [cat.name, true])));
+  const { categories, deleteTask, getTasksWithTimeline, getTasksByCategory } = useTaskStore();
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(categories.map((cat) => [cat.name, true]))
+  );
 
   const toggleCategory = (categoryName: string) => {
     setExpandedCategories((prev) => ({
@@ -95,11 +94,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({
                   onClick={() => toggleCategory(category.name)}
                 >
                   <td className="px-2 py-3 border font-medium flex items-center justify-between">
-                    {isExpanded ? (
-                      <ChevronDown size={16} />
-                    ) : (
-                      <ChevronRight size={16} />
-                    )}
+                    {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                     <span className="ml-1 text-center ">{category.name}</span>
                     <Button
                       variant="ghost"
@@ -118,11 +113,10 @@ export const TaskTable: React.FC<TaskTableProps> = ({
                     </Button>
                   </td>
                   <td
-                    colSpan={6 + 12 * 5}
+                    colSpan={mockTableHeader.length + 12 * 5}
                     className="px-6 py-3 border text-gray-500"
                   >
-                    {categoryTasks.length}{" "}
-                    {categoryTasks.length === 1 ? "Ticket" : "Tickets"}
+                    {categoryTasks.length} {categoryTasks.length === 1 ? "Ticket" : "Tickets"}
                   </td>
                 </tr>
 

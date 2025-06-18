@@ -12,6 +12,7 @@ export interface Task {
   dueDate: Date;
   groupId?: string;
   parentId?: string;
+  channelTags: ChannelTag;
   subtasks?: Task[];
 }
 
@@ -24,6 +25,15 @@ export type TaskStatus =
   | "Refação"
   | "Aprovado"
   | "Aguardando Aprovação";
+
+export type ChannelTag =
+  | "Whatsapp"
+  | "Instagram"
+  | "Canais Ágeis"
+  | "Tudo"
+  | "E-mail"
+  | "Spotify"
+  | "";
 
 export interface Category {
   id: string;

@@ -5,6 +5,7 @@ export const mockTableHeader = [
   "DEADLINE APROVAÇÃO",
   "COMENTÁRIOS",
   "ARQUIVOS",
+  "CANAIS",
   "STATUS",
   "ETAPA",
   "DATA DE INÍCIO",
