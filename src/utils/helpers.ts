@@ -8,17 +8,47 @@ export const generateId = (): string => {
 };
 
 export const getDefaultCategories = (): string[] => {
-  return ["PLANEJAMENTO", "ORÇAMENTO", "COMUNICAÇÃO", "VÍDEO", "ATIVAÇÕES", "MATERIAL GRÁFICO", "CENOGRAFIA", "PRÉ-EVENTO", "EVENTO"];
+  return [
+    "PLANEJAMENTO",
+    "ORÇAMENTO",
+    "COMUNICAÇÃO",
+    "VÍDEO",
+    "ATIVAÇÕES",
+    "MATERIAL GRÁFICO",
+    "CENOGRAFIA",
+    "PRÉ-EVENTO",
+    "EVENTO",
+  ];
 };
 
 export const getStatusColor = (status: string): string => {
   switch (status) {
-    case "Não Iniciado":
-      return "bg-red-200";
-    case "Finalizado":
-      return "bg-green-200";
+    case "Em Criação":
+      return "bg-blue-200 text-blue-800";
+
+    case "Aguardando Informação":
+      return "bg-yellow-200 text-yellow-800";
+
+    case "Publicada":
+      return "bg-pink-200 text-pink-800";
+
+    case "Refação":
+      return "bg-red-200 text-red-800";
+
+    case "Aprovado":
+      return "bg-green-200 text-green-800";
+
+    case "Aprovado NATURA":
+      return "bg-emerald-300 text-emerald-900";
+
+    case "Não iniciado":
+      return "bg-gray-300 text-gray-800";
+
+    case "Aguardando Aprovação":
+      return "bg-amber-800 text-white";
+
     default:
-      return "bg-gray-200";
+      return "bg-gray-100 text-gray-700";
   }
 };
 
@@ -46,7 +76,12 @@ export const calculateTimeline = (task: Task): WeekCell[] => {
   for (let month = 1; month <= 12; month++) {
     for (let week = 1; week <= 5; week++) {
       // Assume the cell is not active by default
-      const isActive = isWeekInTaskInterval(month, week, task.startDate, task.dueDate);
+      const isActive = isWeekInTaskInterval(
+        month,
+        week,
+        task.startDate,
+        task.dueDate
+      );
 
       timeline.push({
         month,
@@ -60,7 +95,12 @@ export const calculateTimeline = (task: Task): WeekCell[] => {
 };
 
 // Helper function to check if a specific week in a month falls within a task's interval
-const isWeekInTaskInterval = (month: number, week: number, startDate: Date, dueDate: Date): boolean => {
+const isWeekInTaskInterval = (
+  month: number,
+  week: number,
+  startDate: Date,
+  dueDate: Date
+): boolean => {
   // This is a simplified approach - in a real implementation, you would need to calculate
   // the actual date ranges for each week in each month
   const year = new Date().getFullYear();
@@ -73,8 +113,10 @@ const isWeekInTaskInterval = (month: number, week: number, startDate: Date, dueD
   // Check if this mock date is within the task's interval
   return (
     isWithinInterval(mockWeekDate, { start: startDate, end: dueDate }) ||
-    (isSameMonth(mockWeekDate, startDate) && getISOWeek(mockWeekDate) === getISOWeek(startDate)) ||
-    (isSameMonth(mockWeekDate, dueDate) && getISOWeek(mockWeekDate) === getISOWeek(dueDate))
+    (isSameMonth(mockWeekDate, startDate) &&
+      getISOWeek(mockWeekDate) === getISOWeek(startDate)) ||
+    (isSameMonth(mockWeekDate, dueDate) &&
+      getISOWeek(mockWeekDate) === getISOWeek(dueDate))
   );
 };
 
@@ -84,7 +126,15 @@ export const exportToExcel = async (tasks: Task[]): Promise<void> => {
   const worksheet = workbook.addWorksheet("Planejamento de Eventos");
 
   // Set column headers
-  const headers = ["CATEGORIA", "O QUE", "QUEM", "STATUS", "ETAPA", "DATA DE INÍCIO", "DATA PREVISTA"];
+  const headers = [
+    "CATEGORIA",
+    "O QUE",
+    "QUEM",
+    "STATUS",
+    "ETAPA",
+    "DATA DE INÍCIO",
+    "DATA PREVISTA",
+  ];
 
   // Add month/week headers
   for (let month = 1; month <= 12; month++) {
@@ -131,6 +181,8 @@ export const exportToExcel = async (tasks: Task[]): Promise<void> => {
 
   // Create buffer and download
   const buffer = await workbook.xlsx.writeBuffer();
-  const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
   saveAs(blob, `planejamento_eventos_${format(new Date(), "dd-MM-yyyy")}.xlsx`);
 };
