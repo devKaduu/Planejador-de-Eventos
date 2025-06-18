@@ -29,6 +29,9 @@ const Dashboard: React.FC = () => {
         stage: "",
         startDate: new Date(),
         dueDate: new Date(),
+        commments: "",
+        documents: "",
+        deadline: "",
       });
     }
     setShowTaskForm(true);
