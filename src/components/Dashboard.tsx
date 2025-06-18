@@ -77,7 +77,7 @@ const Dashboard: React.FC = () => {
           {/* <h1 className="text-3xl font-bold text-gray-800">CRONO JOY</h1> */}
           <img src={Logo} alt="logo" className="w-20" />
           <div className="flex space-x-3">
-            <Button onClick={handleExportToExcel} variant="sucess" disabled>
+            <Button onClick={handleExportToExcel} variant="sucess">
               <Download size={18} className="mr-2" />
               Exportar Excel
             </Button>

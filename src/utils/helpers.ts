@@ -1,7 +1,7 @@
-import { format, getISOWeek, isSameMonth, isWithinInterval } from "date-fns";
+import { format, startOfMonth } from "date-fns";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
-import type { ChannelTag, Task, WeekCell } from "../types";
+import type { ChannelTag, Task } from "../types";
 
 export const generateId = (): string => {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
@@ -93,103 +93,107 @@ export const getMonthName = (month: number): string => {
   return format(date, "MMM", { locale: undefined }); // Using undefined to default to browser's locale
 };
 
-// Calculate timeline cells for a task
-export const calculateTimeline = (task: Task): WeekCell[] => {
-  const timeline: WeekCell[] = [];
+// Utilitário de nome dos meses em inglês (código usa padrão do seu Excel)
+const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
-  // Create a matrix of all possible month/week combinations
-  for (let month = 1; month <= 12; month++) {
-    for (let week = 1; week <= 5; week++) {
-      // Assume the cell is not active by default
-      const isActive = isWeekInTaskInterval(month, week, task.startDate, task.dueDate);
+// Timeline generator
+export function calculateTimeline(
+  task: Task
+): { month: number; week: number; isActive: boolean }[] {
+  const timeline: any = [];
+  const start = new Date(task.startDate);
+  const end = new Date(task.dueDate);
+  const current = new Date(start);
 
-      timeline.push({
-        month,
-        week,
-        isActive,
-      });
+  while (current <= end) {
+    const month = current.getMonth() + 1;
+    const day = current.getDate();
+    const firstDayOfMonth = startOfMonth(current);
+    const week = Math.ceil((day + firstDayOfMonth.getDay()) / 7);
+
+    const exists = timeline.find((t: any) => t.month === month && t.week === week);
+    if (!exists) {
+      timeline.push({ month, week, isActive: true });
     }
+
+    current.setDate(current.getDate() + 1);
   }
 
   return timeline;
-};
+}
 
-// Helper function to check if a specific week in a month falls within a task's interval
-const isWeekInTaskInterval = (
-  month: number,
-  week: number,
-  startDate: Date,
-  dueDate: Date
-): boolean => {
-  // This is a simplified approach - in a real implementation, you would need to calculate
-  // the actual date ranges for each week in each month
-  const year = new Date().getFullYear();
-
-  // Create a mock date for this week and month (this is simplified)
-  // In a real implementation, you would need to calculate the first day of the given week in the month
-  const weekStartDay = (week - 1) * 7 + 1;
-  const mockWeekDate = new Date(year, month - 1, Math.min(weekStartDay, 28));
-
-  // Check if this mock date is within the task's interval
-  return (
-    isWithinInterval(mockWeekDate, { start: startDate, end: dueDate }) ||
-    (isSameMonth(mockWeekDate, startDate) && getISOWeek(mockWeekDate) === getISOWeek(startDate)) ||
-    (isSameMonth(mockWeekDate, dueDate) && getISOWeek(mockWeekDate) === getISOWeek(dueDate))
-  );
-};
-
-// Export table to Excel
 export const exportToExcel = async (tasks: Task[]): Promise<void> => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Planejamento de Eventos");
 
-  // Set column headers
+  // Cabeçalhos principais
   const headers = [
     "CATEGORIA",
     "O QUE",
     "QUEM",
+    "DEADLINE APROVAÇÃO",
+    "COMENTÁRIOS",
+    "ARQUIVOS",
+    "CANAIS",
     "STATUS",
     "ETAPA",
     "DATA DE INÍCIO",
     "DATA PREVISTA",
   ];
 
-  // Add month/week headers
-  for (let month = 1; month <= 12; month++) {
+  // Cabeçalhos da timeline
+  months.forEach((month) => {
     for (let week = 1; week <= 5; week++) {
-      headers.push(`${getMonthName(month)} - S${week}`);
+      headers.push(`${month} - S${week}`);
     }
-  }
+  });
 
+  // Define colunas
   worksheet.columns = headers.map((header) => ({
     header,
     key: header.toLowerCase().replace(/\s/g, "_").replace(/[^\w]/g, ""),
-    width: header.includes("DATA") ? 15 : header === "O QUE" ? 30 : 12,
+    width: header.includes("DATA") ? 15 : header === "O QUE" ? 30 : 20,
   }));
 
-  // Add data
+  // Add os dados
   tasks.forEach((task) => {
     const timeline = calculateTimeline(task);
+
     const row: Record<string, unknown> = {
       categoria: task.category,
       o_que: task.description,
       quem: task.responsible,
-      status: getStatusText(task.status),
+      deadline_aprovação: task.deadline,
+      comentários: task.commments,
+      arquivos: task.documents,
+      canais: task.channelTags,
+      status: task.status,
       etapa: task.stage,
-      data_de_início: format(task.startDate, "dd/MM/yyyy"),
-      data_prevista: format(task.dueDate, "dd/MM/yyyy"),
+      data_de_início: format(new Date(task.startDate), "dd/MM/yyyy"),
+      data_prevista: format(new Date(task.dueDate), "dd/MM/yyyy"),
     };
 
-    // Fill timeline cells
     timeline.forEach((cell) => {
-      const key = `${getMonthName(cell.month).toLowerCase()}_s${cell.week}`;
-      row[key] = cell.isActive ? "X" : "";
+      const colKey = `${months[cell.month - 1]} - S${cell.week}`;
+      row[colKey.toLowerCase().replace(/ /g, "_")] = "X";
     });
 
-    worksheet.addRow(row);
+    const addedRow = worksheet.addRow(row);
+
+    // Pintar as células da timeline
+    timeline.forEach((cell) => {
+      const colKey = `${months[cell.month - 1]} - S${cell.week}`;
+      const colIndex = headers.findIndex((h) => h === colKey) + 1;
+      const cellRef = addedRow.getCell(colIndex);
+      cellRef.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FFFFC0CB" }, // rosa claro
+      };
+    });
   });
 
-  // Apply styles
+  // Estilizar header
   worksheet.getRow(1).font = { bold: true };
   worksheet.getRow(1).fill = {
     type: "pattern",
@@ -197,7 +201,7 @@ export const exportToExcel = async (tasks: Task[]): Promise<void> => {
     fgColor: { argb: "FFD3D3D3" },
   };
 
-  // Create buffer and download
+  // Baixar arquivo
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
