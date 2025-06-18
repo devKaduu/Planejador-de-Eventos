@@ -3,6 +3,9 @@ export interface Task {
   category: string;
   description: string;
   responsible: string;
+  deadline: string;
+  commments: string;
+  documents: string;
   status: TaskStatus;
   stage: string;
   startDate: Date;
@@ -12,7 +15,15 @@ export interface Task {
   subtasks?: Task[];
 }
 
-export type TaskStatus = "Não Iniciado" | "Finalizado";
+export type TaskStatus =
+  | "Não Iniciado"
+  | "Em Criação"
+  | "Finalizado"
+  | "Aguardando Informação"
+  | "Publicada"
+  | "Refação"
+  | "Aprovado"
+  | "Aguardando Aprovação";
 
 export interface Category {
   id: string;
