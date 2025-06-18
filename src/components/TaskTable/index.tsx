@@ -72,7 +72,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({
             ))}
           </tr>
           <tr className="bg-[#8d1b55] text-center text-white shadow-2xl ">
-            <th colSpan={7}></th>
+            <th colSpan={mockTableHeader.length}></th>
             {weekHeaders.map((week) => (
               <th
                 key={`week-${week.month}-${week.week}`}
