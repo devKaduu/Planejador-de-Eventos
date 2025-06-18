@@ -116,7 +116,9 @@ export const TaskTable: React.FC<TaskTableProps> = ({
                     colSpan={mockTableHeader.length + 12 * 5}
                     className="px-6 py-3 border text-gray-500"
                   >
-                    {categoryTasks.length} {categoryTasks.length === 1 ? "Ticket" : "Tickets"}
+                    {categoryTasks.length <= 0
+                      ? "Nenhuma tarefa nesta categoria."
+                      : categoryTasks.length + " Tarefa(s)"}
                   </td>
                 </tr>
 
