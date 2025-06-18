@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { useTaskStore } from "../store/useTaskStore.ts";
-import TaskTable from "./TaskTable";
-import TaskForm from "./TaskForm";
-import { Button } from "./ui/Button";
-import { exportToExcel } from "../utils/helpers";
-import { Task } from "../types";
 import { Download, Plus } from "lucide-react";
+import React, { useState } from "react";
 import Logo from "../assets/logo.jpg"; // Adjust the path as necessary
+import { useTaskStore } from "../store/useTaskStore.ts";
+import { Task } from "../types";
+import { exportToExcel } from "../utils/helpers";
+import TaskForm from "./TaskForm";
+import TaskTable from "./TaskTable";
+import { Button } from "./ui/Button";
 
 const Dashboard: React.FC = () => {
   const { tasks, addTask, updateTask, deleteCategory } = useTaskStore();
@@ -53,6 +53,19 @@ const Dashboard: React.FC = () => {
     exportToExcel(tasks);
   };
 
+  const confirmDelete = () => {
+    const confirmation = window.confirm("Tem certeza que deseja apagar TUDO?");
+    if (!confirmation) return;
+
+    const password = prompt("Digite a senha para confirmar:");
+    if (password === "minha-senha-secreta-123") {
+      useTaskStore.getState().resetAll(); // <-- você vai criar isso abaixo
+      alert("Tudo foi apagado com sucesso.");
+    } else {
+      alert("Senha incorreta. Nada foi apagado.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#effe3c] shadow-2xl shadow-black">
       <div className="container mx-auto py-8 px-4">
@@ -68,28 +81,18 @@ const Dashboard: React.FC = () => {
               <Plus size={18} className="mr-2" />
               Nova Tarefa
             </Button>
-            <Button
-              variant="danger"
-              onClick={() => {
-                const confirmation = window.confirm("Tem certeza que deseja apagar TUDO?");
-                if (!confirmation) return;
-
-                const password = prompt("Digite a senha para confirmar:");
-                if (password === "minha-senha-secreta-123") {
-                  useTaskStore.getState().resetAll(); // <-- você vai criar isso abaixo
-                  alert("Tudo foi apagado com sucesso.");
-                } else {
-                  alert("Senha incorreta. Nada foi apagado.");
-                }
-              }}
-            >
+            <Button variant="danger" onClick={confirmDelete}>
               Apagar Tudo
             </Button>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow-2xl overflow-hidden">
-          <TaskTable onEditTask={handleEditTask} onAddTask={handleShowAddForm} onDeleteCategory={deleteCategory} />
+          <TaskTable
+            onEditTask={handleEditTask}
+            onAddTask={handleShowAddForm}
+            onDeleteCategory={deleteCategory}
+          />
         </div>
 
         {showTaskForm && (

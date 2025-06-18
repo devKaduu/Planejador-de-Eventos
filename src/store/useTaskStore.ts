@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware"; // <-- import aqui
-import { Task, Category, GroupedTasks, WeekCell } from "../types";
+import { Category, GroupedTasks, Task, WeekCell } from "../types";
 import { calculateTimeline, generateId, getDefaultCategories } from "../utils/helpers";
 
 interface TaskState {
@@ -23,7 +23,6 @@ interface TaskState {
   resetAll: () => void;
 }
 
-// 👇 Aqui adicionamos o persist!
 export const useTaskStore = create<TaskState>()(
   persist(
     (set, get) => ({
@@ -46,7 +45,9 @@ export const useTaskStore = create<TaskState>()(
 
           if (parentId) {
             return {
-              tasks: state.tasks.map((t) => (t.id === parentId ? { ...t, subtasks: [...(t.subtasks || []), newTask] } : t)),
+              tasks: state.tasks.map((t) =>
+                t.id === parentId ? { ...t, subtasks: [...(t.subtasks || []), newTask] } : t
+              ),
             };
           }
 
@@ -100,7 +101,9 @@ export const useTaskStore = create<TaskState>()(
           const category = state.categories.find((c) => c.id === id);
           return {
             categories: state.categories.filter((c) => c.id !== id),
-            tasks: state.tasks.map((task) => (task.category === category?.name ? { ...task, category: "" } : task)),
+            tasks: state.tasks.map((task) =>
+              task.category === category?.name ? { ...task, category: "" } : task
+            ),
           };
         }),
 
@@ -112,13 +115,17 @@ export const useTaskStore = create<TaskState>()(
       groupTasks: (taskIds, groupId) => {
         const actualGroupId = groupId || generateId();
         return set((state) => ({
-          tasks: state.tasks.map((task) => (taskIds.includes(task.id) ? { ...task, groupId: actualGroupId } : task)),
+          tasks: state.tasks.map((task) =>
+            taskIds.includes(task.id) ? { ...task, groupId: actualGroupId } : task
+          ),
         }));
       },
 
       ungroupTask: (taskId) =>
         set((state) => ({
-          tasks: state.tasks.map((task) => (task.id === taskId ? { ...task, groupId: undefined } : task)),
+          tasks: state.tasks.map((task) =>
+            task.id === taskId ? { ...task, groupId: undefined } : task
+          ),
         })),
 
       getTasksWithTimeline: () => {
