@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
 import React, { useMemo, useState } from "react";
-import { useTaskStore } from "../../store/useTaskStore.ts";
+import { useTaskStore } from "../../store/tasks/useTaskStore.ts";
 import { getMonthName } from "../../utils/helpers";
 import { TableHeaderItem } from "../TableHeaderItem.tsx";
 import { TaskRow } from "../TaskRow.tsx";
@@ -13,10 +13,11 @@ export const TaskTable: React.FC<TaskTableProps> = ({
   onAddTask,
   onDeleteCategory,
 }) => {
-  const { categories, deleteTask, getTasksWithTimeline, getTasksByCategory } = useTaskStore();
-  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(categories.map((cat) => [cat.name, true]))
-  );
+  const { categories, deleteTask, getTasksWithTimeline, getTasksByCategory } =
+    useTaskStore();
+  const [expandedCategories, setExpandedCategories] = useState<
+    Record<string, boolean>
+  >(() => Object.fromEntries(categories.map((cat) => [cat.name, true])));
 
   const toggleCategory = (categoryName: string) => {
     setExpandedCategories((prev) => ({
@@ -94,7 +95,11 @@ export const TaskTable: React.FC<TaskTableProps> = ({
                   onClick={() => toggleCategory(category.name)}
                 >
                   <td className="px-2 py-3 border font-medium flex items-center justify-between">
-                    {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                    {isExpanded ? (
+                      <ChevronDown size={16} />
+                    ) : (
+                      <ChevronRight size={16} />
+                    )}
                     <span className="ml-1 text-center ">{category.name}</span>
                     <Button
                       variant="ghost"

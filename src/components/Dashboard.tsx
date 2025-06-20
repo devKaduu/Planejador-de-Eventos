@@ -1,7 +1,7 @@
 import { Download, Plus } from "lucide-react";
 import React, { useState } from "react";
-import Logo from "../assets/logo.jpg"; // Adjust the path as necessary
-import { useTaskStore } from "../store/useTaskStore.ts";
+import Logo from "../assets/logo.jpg";
+import { useTaskStore } from "../store";
 import { Task } from "../types";
 import { exportToExcel } from "../utils/helpers";
 import TaskForm from "./TaskForm";
@@ -12,7 +12,9 @@ const Dashboard: React.FC = () => {
   const { tasks, addTask, updateTask, deleteCategory } = useTaskStore();
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
-  const [parentTaskId, setParentTaskId] = useState<string | undefined>(undefined);
+  const [parentTaskId, setParentTaskId] = useState<string | undefined>(
+    undefined
+  );
 
   const handleShowAddForm = (category?: string, parentId?: string) => {
     setEditingTask(undefined);

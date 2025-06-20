@@ -1,27 +1,12 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware"; // <-- import aqui
-import { Category, GroupedTasks, Task, WeekCell } from "../types";
-import { calculateTimeline, generateId, getDefaultCategories } from "../utils/helpers";
-
-interface TaskState {
-  tasks: Task[];
-  categories: Category[];
-  selectedCategory: string | null;
-
-  addTask: (task: Omit<Task, "id">, parentId?: string) => void;
-  updateTask: (id: string, updatedTask: Partial<Task>) => void;
-  deleteTask: (id: string) => void;
-  addCategory: (name: string) => void;
-  deleteCategory: (id: string) => void;
-  setSelectedCategory: (categoryId: string | null) => void;
-  groupTasks: (taskIds: string[], groupId?: string) => void;
-  ungroupTask: (taskId: string) => void;
-
-  getTasksWithTimeline: () => (Task & { timeline: WeekCell[] })[];
-  getTasksByCategory: (categoryName: string) => Task[];
-  getGroupedTasks: () => GroupedTasks;
-  resetAll: () => void;
-}
+import { persist } from "zustand/middleware";
+import { Task, WeekCell } from "../../types";
+import {
+  calculateTimeline,
+  generateId,
+  getDefaultCategories,
+} from "../../utils/helpers";
+import { TaskState } from "./types";
 
 export const useTaskStore = create<TaskState>()(
   persist(
@@ -46,7 +31,9 @@ export const useTaskStore = create<TaskState>()(
           if (parentId) {
             return {
               tasks: state.tasks.map((t) =>
-                t.id === parentId ? { ...t, subtasks: [...(t.subtasks || []), newTask] } : t
+                t.id === parentId
+                  ? { ...t, subtasks: [...(t.subtasks || []), newTask] }
+                  : t
               ),
             };
           }
@@ -64,7 +51,8 @@ export const useTaskStore = create<TaskState>()(
                 subtasks: (task.subtasks || []).map((subtask) => ({
                   ...subtask,
                   category: updatedTask.category || subtask.category || "",
-                  description: updatedTask.description || subtask.description || "",
+                  description:
+                    updatedTask.description || subtask.description || "",
                 })),
               };
             }
@@ -87,7 +75,8 @@ export const useTaskStore = create<TaskState>()(
             .filter((task) => task.id !== id)
             .map((task) => ({
               ...task,
-              subtasks: task.subtasks?.filter((subtask) => subtask.id !== id) || [],
+              subtasks:
+                task.subtasks?.filter((subtask) => subtask.id !== id) || [],
             })),
         })),
 
@@ -102,31 +91,12 @@ export const useTaskStore = create<TaskState>()(
           return {
             categories: state.categories.filter((c) => c.id !== id),
             tasks: state.tasks.map((task) =>
-              task.category === category?.name ? { ...task, category: "" } : task
+              task.category === category?.name
+                ? { ...task, category: "" }
+                : task
             ),
           };
         }),
-
-      setSelectedCategory: (categoryId) =>
-        set({
-          selectedCategory: categoryId,
-        }),
-
-      groupTasks: (taskIds, groupId) => {
-        const actualGroupId = groupId || generateId();
-        return set((state) => ({
-          tasks: state.tasks.map((task) =>
-            taskIds.includes(task.id) ? { ...task, groupId: actualGroupId } : task
-          ),
-        }));
-      },
-
-      ungroupTask: (taskId) =>
-        set((state) => ({
-          tasks: state.tasks.map((task) =>
-            task.id === taskId ? { ...task, groupId: undefined } : task
-          ),
-        })),
 
       getTasksWithTimeline: () => {
         const { tasks } = get();
@@ -143,19 +113,6 @@ export const useTaskStore = create<TaskState>()(
         return tasks.filter((task) => task.category === categoryName);
       },
 
-      getGroupedTasks: () => {
-        const { tasks } = get();
-        return tasks.reduce((acc: GroupedTasks, task) => {
-          if (task.groupId) {
-            if (!acc[task.groupId]) {
-              acc[task.groupId] = [];
-            }
-            acc[task.groupId].push(task);
-          }
-          return acc;
-        }, {});
-      },
-
       resetAll: () =>
         set(() => ({
           tasks: [],
@@ -164,7 +121,7 @@ export const useTaskStore = create<TaskState>()(
         })),
     }),
     {
-      name: "task-storage", // nome no localStorage
+      name: "task-storage",
     }
   )
 );
