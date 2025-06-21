@@ -1,12 +1,12 @@
 import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { useTaskStore } from "../../store/tasks/useTaskStore.ts";
-import { getMonthName } from "../../utils/helpers";
 import { TableHeaderItem } from "../TableHeaderItem.tsx";
-import { TaskRow } from "../TaskRow.tsx";
 import { Button } from "../ui/Button";
 import { mockTableHeader } from "./mock.ts";
 import { TaskTableProps } from "./props.ts";
+import { TaskRow } from "../TaskRow/index.tsx";
+import { DateFormatter } from "../../utils/date-formatter.ts";
 
 export const TaskTable: React.FC<TaskTableProps> = ({
   onEditTask,
@@ -30,7 +30,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({
     () =>
       Array.from({ length: 12 }, (_, i) => i + 1).map((month) => ({
         month,
-        name: getMonthName(month),
+        name: DateFormatter.getMonthName(month),
         colSpan: 5,
       })),
     []

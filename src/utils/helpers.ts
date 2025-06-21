@@ -1,107 +1,22 @@
 import { format, getISOWeek, isSameMonth, isWithinInterval } from "date-fns";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
-import type { ChannelTag, Task, WeekCell } from "../types";
+import type { Task, WeekCell } from "../types";
+import { TaskRowUtils } from "../components/TaskRow/utils";
+import { DateFormatter } from "./date-formatter";
 
-export const generateId = (): string => {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
-};
-
-export const getDefaultCategories = (): string[] => {
-  return [
-    "PLANEJAMENTO",
-    "ORÇAMENTO",
-    "COMUNICAÇÃO",
-    "VÍDEO",
-    "ATIVAÇÕES",
-    "MATERIAL GRÁFICO",
-    "CENOGRAFIA",
-    "PRÉ-EVENTO",
-    "EVENTO",
-  ];
-};
-
-export const getStatusColor = (status: string): string => {
-  switch (status) {
-    case "Em Criação":
-      return "bg-blue-200 text-blue-800";
-
-    case "Aguardando Informação":
-      return "bg-yellow-200 text-yellow-800";
-
-    case "Publicada":
-      return "bg-pink-200 text-pink-800";
-
-    case "Refação":
-      return "bg-red-200 text-red-800";
-
-    case "Aprovado":
-      return "bg-green-200 text-green-800";
-
-    case "Aprovado NATURA":
-      return "bg-emerald-300 text-emerald-900";
-
-    case "Não iniciado":
-      return "bg-gray-300 text-gray-800";
-
-    case "Aguardando Aprovação":
-      return "bg-amber-800 text-white";
-
-    default:
-      return "bg-gray-100 text-gray-700";
-  }
-};
-
-export function getChannelColor(channel: ChannelTag): string {
-  switch (channel) {
-    case "Whatsapp":
-      return "bg-green-200 text-green-800";
-
-    case "Instagram":
-      return "bg-red-700 text-white";
-
-    case "Canais Ágeis":
-      return "bg-orange-200 text-orange-800";
-
-    case "Tudo":
-      return "bg-blue-100 text-blue-800";
-
-    case "E-mail":
-      return "bg-yellow-100 text-yellow-800";
-
-    case "Spotify":
-      return "bg-gray-200 text-gray-800";
-
-    default:
-      return "bg-gray-100 text-gray-700";
-  }
-}
-
-export const getStatusText = (status: string): string => {
-  switch (status) {
-    case "pending":
-      return "Não Iniciado";
-    case "completed":
-      return "Finalizado";
-    default:
-      return status;
-  }
-};
-
-export const getMonthName = (month: number): string => {
-  const date = new Date(2023, month - 1, 1);
-  return format(date, "MMM", { locale: undefined }); // Using undefined to default to browser's locale
-};
-
-// Calculate timeline cells for a task
 export const calculateTimeline = (task: Task): WeekCell[] => {
   const timeline: WeekCell[] = [];
 
-  // Create a matrix of all possible month/week combinations
   for (let month = 1; month <= 12; month++) {
     for (let week = 1; week <= 5; week++) {
       // Assume the cell is not active by default
-      const isActive = isWeekInTaskInterval(month, week, task.startDate, task.dueDate);
+      const isActive = isWeekInTaskInterval(
+        month,
+        week,
+        task.startDate,
+        task.dueDate
+      );
 
       timeline.push({
         month,
@@ -114,7 +29,6 @@ export const calculateTimeline = (task: Task): WeekCell[] => {
   return timeline;
 };
 
-// Helper function to check if a specific week in a month falls within a task's interval
 const isWeekInTaskInterval = (
   month: number,
   week: number,
@@ -133,12 +47,13 @@ const isWeekInTaskInterval = (
   // Check if this mock date is within the task's interval
   return (
     isWithinInterval(mockWeekDate, { start: startDate, end: dueDate }) ||
-    (isSameMonth(mockWeekDate, startDate) && getISOWeek(mockWeekDate) === getISOWeek(startDate)) ||
-    (isSameMonth(mockWeekDate, dueDate) && getISOWeek(mockWeekDate) === getISOWeek(dueDate))
+    (isSameMonth(mockWeekDate, startDate) &&
+      getISOWeek(mockWeekDate) === getISOWeek(startDate)) ||
+    (isSameMonth(mockWeekDate, dueDate) &&
+      getISOWeek(mockWeekDate) === getISOWeek(dueDate))
   );
 };
 
-// Export table to Excel
 export const exportToExcel = async (tasks: Task[]): Promise<void> => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Planejamento de Eventos");
@@ -157,7 +72,7 @@ export const exportToExcel = async (tasks: Task[]): Promise<void> => {
   // Add month/week headers
   for (let month = 1; month <= 12; month++) {
     for (let week = 1; week <= 5; week++) {
-      headers.push(`${getMonthName(month)} - S${week}`);
+      headers.push(`${DateFormatter.getMonthName(month)} - S${week}`);
     }
   }
 
@@ -174,7 +89,7 @@ export const exportToExcel = async (tasks: Task[]): Promise<void> => {
       categoria: task.category,
       o_que: task.description,
       quem: task.responsible,
-      status: getStatusText(task.status),
+      status: TaskRowUtils.getStatusText(task.status),
       etapa: task.stage,
       data_de_início: format(task.startDate, "dd/MM/yyyy"),
       data_prevista: format(task.dueDate, "dd/MM/yyyy"),
@@ -182,7 +97,9 @@ export const exportToExcel = async (tasks: Task[]): Promise<void> => {
 
     // Fill timeline cells
     timeline.forEach((cell) => {
-      const key = `${getMonthName(cell.month).toLowerCase()}_s${cell.week}`;
+      const key = `${DateFormatter.getMonthName(cell.month).toLowerCase()}_s${
+        cell.week
+      }`;
       row[key] = cell.isActive ? "X" : "";
     });
 

@@ -1,13 +1,15 @@
 import React from "react";
-import { getMonthName } from "../utils/helpers";
+import { DateFormatter } from "../utils";
 
 const TimelineHeader: React.FC = () => {
   // Generate month headers for the timeline
-  const monthHeaders = Array.from({ length: 12 }, (_, i) => i + 1).map((month) => ({
-    month,
-    name: getMonthName(month),
-    colSpan: 5, // 5 weeks per month
-  }));
+  const monthHeaders = Array.from({ length: 12 }, (_, i) => i + 1).map(
+    (month) => ({
+      month,
+      name: DateFormatter.getMonthName(month),
+      colSpan: 5, // 5 weeks per month
+    })
+  );
 
   // Generate week headers for the timeline
   const weekHeaders = Array.from({ length: 12 * 5 }, (_, i) => {
@@ -32,7 +34,10 @@ const TimelineHeader: React.FC = () => {
       <div className="flex">
         <div className="w-72 px-4 py-1 border-l border-r"></div>
         {weekHeaders.map((week) => (
-          <div key={`week-${week.month}-${week.week}`} className="w-8 text-center text-xs py-1 border-r">
+          <div
+            key={`week-${week.month}-${week.week}`}
+            className="w-8 text-center text-xs py-1 border-r"
+          >
             {week.label}
           </div>
         ))}

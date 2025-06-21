@@ -1,19 +1,17 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Task, WeekCell } from "../../types";
-import {
-  calculateTimeline,
-  generateId,
-  getDefaultCategories,
-} from "../../utils/helpers";
+import { calculateTimeline } from "../../utils/helpers";
 import { TaskState } from "./types";
+import { Generator } from "../../utils";
+import { defaultCategories } from "./mocks";
 
 export const useTaskStore = create<TaskState>()(
   persist(
     (set, get) => ({
       tasks: [],
-      categories: getDefaultCategories().map((name) => ({
-        id: generateId(),
+      categories: defaultCategories.map((name) => ({
+        id: Generator.randomId(),
         name,
         isDefault: true,
       })),
@@ -23,7 +21,7 @@ export const useTaskStore = create<TaskState>()(
         set((state) => {
           const newTask = {
             ...task,
-            id: generateId(),
+            id: Generator.randomId(),
             subtasks: [],
             parentId: parentId || undefined,
           };
@@ -82,7 +80,7 @@ export const useTaskStore = create<TaskState>()(
 
       addCategory: (name) =>
         set((state) => ({
-          categories: [...state.categories, { id: generateId(), name }],
+          categories: [...state.categories, { id: Generator.randomId(), name }],
         })),
 
       deleteCategory: (id) =>
