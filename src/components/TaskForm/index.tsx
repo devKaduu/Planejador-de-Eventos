@@ -1,9 +1,7 @@
-import { PlusCircle } from "lucide-react";
 import React, { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { useTaskStore } from "../../store/tasks/useTaskStore.ts";
 import { ChannelTag, Task, TaskStatus } from "../../types/index.ts";
-import { Button } from "../ui/Button.tsx";
 import { TaskFormProps } from "./props.ts";
 import { TaskFormHeader } from "../TaskFormHeader/index.tsx";
 import { TaskFormFooter } from "../TaskFormFooter/index.tsx";
@@ -13,6 +11,7 @@ import { Datepicker } from "../Datepicker/index.tsx";
 import { Select } from "../Select/index.tsx";
 import { channelOptions, statusOptions } from "./mocks.ts";
 import { InputText } from "../InputText/index.tsx";
+import { CategoryInput } from "../CategoryInput/index.tsx";
 
 export const TaskForm: React.FC<TaskFormProps> = ({
   initialTask,
@@ -48,7 +47,6 @@ export const TaskForm: React.FC<TaskFormProps> = ({
     initialTask?.dueDate || new Date()
   );
   const [newCategory, setNewCategory] = useState("");
-  const [showNewCategory, setShowNewCategory] = useState(false);
 
   const addCategory = useTaskStore((state) => state.addCategory);
 
@@ -57,7 +55,6 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       addCategory(newCategory.trim());
       setCategory(newCategory.trim());
       setNewCategory("");
-      setShowNewCategory(false);
     }
   };
 
@@ -91,57 +88,13 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       />
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Label>Categoria</Label>
-          {parentTask ? (
-            <span className="text-xs text-gray-400">
-              Esta categoria é herdada da tarefa principal
-            </span>
-          ) : showNewCategory ? (
-            <div className="flex items-center space-x-2">
-              <input
-                type="text"
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                placeholder="Nova categoria"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <Button type="button" onClick={handleAddCategory} size="sm">
-                Adicionar
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowNewCategory(false)}
-              >
-                Cancelar
-              </Button>
-            </div>
-          ) : (
-            <div className="flex items-center space-x-2">
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.name}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowNewCategory(true)}
-              >
-                <PlusCircle size={18} />
-              </Button>
-            </div>
-          )}
-        </div>
+        <CategoryInput
+          category={category}
+          newCategory={newCategory}
+          onAddCategory={handleAddCategory}
+          onChangeCategory={setCategory}
+          onChangeNewCategory={setNewCategory}
+        />
         <div>
           <Label>O que será feito</Label>
           {parentTask ? (
