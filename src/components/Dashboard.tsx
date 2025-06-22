@@ -4,8 +4,7 @@ import Logo from "../assets/logo.jpg";
 import { useTaskStore } from "../store";
 import { Task } from "../types";
 import { exportToExcel } from "../utils/helpers";
-import { TaskForm } from "./TaskForm";
-import { TaskTable } from "./TaskTable";
+import { TaskForm, TaskTable } from "./Tasks";
 import { Button } from "./ui/Button";
 
 const Dashboard: React.FC = () => {

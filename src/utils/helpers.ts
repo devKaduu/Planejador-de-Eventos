@@ -2,8 +2,8 @@ import { format, getISOWeek, isSameMonth, isWithinInterval } from "date-fns";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import type { Task, WeekCell } from "../types";
-import { TaskRowUtils } from "../components/TaskRow/utils";
 import { DateFormatter } from "./date-formatter";
+import { TaskRowUtils } from "../components/Tasks/TaskRow/utils";
 
 export const calculateTimeline = (task: Task): WeekCell[] => {
   const timeline: WeekCell[] = [];

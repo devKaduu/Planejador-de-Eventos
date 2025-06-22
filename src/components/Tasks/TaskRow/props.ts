@@ -1,4 +1,4 @@
-import { Task, WeekCell } from "../../types";
+import { Task, WeekCell } from "../../../types";
 
 export type TaskRowProps = {
   task: Task & { timeline?: WeekCell[] };

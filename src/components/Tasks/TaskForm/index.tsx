@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import { useTaskStore } from "../../store/tasks/useTaskStore.ts";
-import { ChannelTag, Task, TaskStatus } from "../../types/index.ts";
+import { useTaskStore } from "../../../store/tasks/useTaskStore.ts";
+import { ChannelTag, Task, TaskStatus } from "../../../types/index.ts";
 import { TaskFormProps } from "./props.ts";
-import { TaskFormHeader } from "../TaskFormHeader/index.tsx";
 import { TaskFormFooter } from "../TaskFormFooter/index.tsx";
-import { Label } from "../Label/index.tsx";
-import { Textarea } from "../Textarea/index.tsx";
-import { Datepicker } from "../Datepicker/index.tsx";
-import { Select } from "../Select/index.tsx";
 import { channelOptions, statusOptions } from "./mocks.ts";
-import { InputText } from "../InputText/index.tsx";
-import { CategoryInput } from "../CategoryInput/index.tsx";
+import {
+  Datepicker,
+  CategoryInput,
+  InputText,
+  Label,
+  Select,
+  Textarea,
+} from "../../Form";
+import { TaskFormHeader } from "../TaskFormHeader/index.tsx";
 
 export const TaskForm: React.FC<TaskFormProps> = ({
   initialTask,

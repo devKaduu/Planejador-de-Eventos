@@ -1,11 +1,10 @@
 import { PlusCircle } from "lucide-react";
 import { InputText } from "../InputText";
-import { Label } from "../Label";
-import { Select } from "../Select";
-import { Button } from "../ui/Button";
+import { Label, Select } from "../../Form";
+import { Button } from "../../ui/Button";
 import { CategoryInputProps } from "./props";
 import { useState } from "react";
-import { useTaskStore } from "../../store";
+import { useTaskStore } from "../../../store";
 
 export const CategoryInput: React.FC<CategoryInputProps> = ({
   parentTask,

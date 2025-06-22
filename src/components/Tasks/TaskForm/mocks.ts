@@ -1,4 +1,4 @@
-import { SelectOption } from "../Select/props";
+import { SelectOption } from "../../Form/Select/props";
 
 export const statusOptions: SelectOption[] = [
   { text: "Não iniciado", value: "Não Iniciado" },

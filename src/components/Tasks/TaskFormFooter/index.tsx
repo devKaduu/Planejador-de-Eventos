@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { TaskFormFooterProps } from "./props";
-import { Button } from "../ui/Button";
+import { Button } from "../../ui/Button";
 
 export const TaskFormFooter: React.FC<TaskFormFooterProps> = ({
   onCancel,

@@ -1,4 +1,4 @@
-import { ChannelTag, TaskStatus } from "../../types";
+import { ChannelTag, TaskStatus } from "../../../types";
 
 export class TaskRowUtils {
   static getStatusColor(status: TaskStatus): string {

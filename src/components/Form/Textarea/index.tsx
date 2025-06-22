@@ -1,4 +1,4 @@
-import { cn } from "../../utils";
+import { cn } from "../../../utils";
 import { TextareaProps } from "./props";
 
 export const Textarea: React.FC<TextareaProps> = ({ className, ...rest }) => {

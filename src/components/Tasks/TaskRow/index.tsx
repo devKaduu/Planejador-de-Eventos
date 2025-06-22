@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { ChevronDown, ChevronRight, Edit, Plus, Trash2 } from "lucide-react";
 import React, { useState } from "react";
-import { Button } from "../ui/Button";
+import { Button } from "../../ui/Button";
 import { TaskRowUtils } from "./utils";
 import { TaskRowProps } from "./props";
 

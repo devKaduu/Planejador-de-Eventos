@@ -1,4 +1,4 @@
-import { cn } from "../../utils";
+import { cn } from "../../../utils";
 import { InputTextProps } from "./props";
 
 export const InputText: React.FC<InputTextProps> = ({ className, ...rest }) => {
